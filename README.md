@@ -7,9 +7,15 @@ We're a small group with a common interest in passing the [CKA](https://www.cncf
 The study group revolves around the [CNCF Exam Curriculum repository ](https://github.com/cncf/curriculum) and as we review the content for each segment, we'll look for creative ways to practice the skills from the segment under review, or identify and fill in gaps in our understanding until we can demonstrate hands on facility with the segment under review. 
 
 What we'll review:
-* Background Material
 
-CKA Curriculum V 0.9 Material
+#### Background Material
+* Building a test environment
+* Linux Fundamentals
+* Container Fundamentals
+* Distributed Systems Fundamentals
+* Whitepapers
+
+#### CKA Curriculum V 0.9 Material
 * 05% - Scheduling
 * 05% - Logging Monitoring
 * 08% - Application Lifecycle Management
@@ -20,4 +26,3 @@ CKA Curriculum V 0.9 Material
 * 19% - Core Concepts
 * 11% - Networking
 * 12% - Installation, Configuration & Validation
-
