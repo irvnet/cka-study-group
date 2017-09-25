@@ -12,6 +12,7 @@ What we'll review:
 * [Building a test environment](https://github.com/irvnet/cka-study-group/blob/master/test-env/readme.md)
 * Linux Fundamentals
 * [Container Fundamentals](https://github.com/irvnet/cka-study-group/blob/master/container-fundamentals/readme.md)
+* [Minikube Tutorial](https://github.com/irvnet/minikube-tutorial)
 * Distributed Systems Fundamentals
 * Whitepapers
 
