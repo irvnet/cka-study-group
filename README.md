@@ -14,9 +14,9 @@ What we'll review:
 * Whitepapers
 
 #### Tutorials
-https://www.digitalocean.com/community/tutorials/an-introduction-to-kubernetes
-https://github.com/kelseyhightower/intro-to-kubernetes-workshop
-https://github.com/kelseyhightower/kubernetes-the-hard-way
+https://www.digitalocean.com/community/tutorials/an-introduction-to-kubernetes  
+https://github.com/kelseyhightower/intro-to-kubernetes-workshop  
+https://github.com/kelseyhightower/kubernetes-the-hard-way  
 
 #### CKA Curriculum V 0.9 Material
 * 05% - Scheduling
