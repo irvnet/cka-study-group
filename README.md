@@ -11,7 +11,7 @@ What we'll review:
 #### Background Material
 * [Building a test environment](https://github.com/irvnet/cka-study-group/blob/master/test-env/readme.md)
 * Linux Fundamentals
-* Container Fundamentals
+* [Container Fundamentals](https://github.com/irvnet/cka-study-group/blob/master/container-fundamentals/readme.md)
 * Distributed Systems Fundamentals
 * Whitepapers
 
