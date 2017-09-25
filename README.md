@@ -1,6 +1,4 @@
-# cka-study-group
-
-#Certified Kubernetes Administrator (CKA) Study Group
+## Certified Kubernetes Administrator (CKA) Study Group
 
 We're a small group with a common interest in passing the [CKA](https://www.cncf.io/certification/expert/). We all have a belief that there's lots of value in understanding distributed systems, containers and container orchestration for the betterment of development and operations, however most of us are working with customers in some capacity and have both a need, and personal interest in learning deep skills in the platform. 
 
@@ -12,9 +10,13 @@ What we'll review:
 * [Building a test environment](https://github.com/irvnet/cka-study-group/blob/master/test-env/readme.md)
 * Linux Fundamentals
 * [Container Fundamentals](https://github.com/irvnet/cka-study-group/blob/master/container-fundamentals/readme.md)
-* [Minikube Tutorial](https://github.com/irvnet/minikube-tutorial)
 * Distributed Systems Fundamentals
 * Whitepapers
+
+#### Tutorials
+https://www.digitalocean.com/community/tutorials/an-introduction-to-kubernetes
+https://github.com/kelseyhightower/intro-to-kubernetes-workshop
+https://github.com/kelseyhightower/kubernetes-the-hard-way
 
 #### CKA Curriculum V 0.9 Material
 * 05% - Scheduling
