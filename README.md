@@ -9,7 +9,7 @@ The study group revolves around the [CNCF Exam Curriculum repository ](https://g
 What we'll review:
 
 #### Background Material
-* Building a test environment
+* [Building a test environment](https://github.com/irvnet/cka-study-group/blob/master/test-env/readme.md)
 * Linux Fundamentals
 * Container Fundamentals
 * Distributed Systems Fundamentals
