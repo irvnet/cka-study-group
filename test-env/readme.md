@@ -11,4 +11,7 @@ Either Virtualbox or [Vmware](https://www.vmware.com/) are great choices. For th
 
 For a guest OS on vagrant machines, we'll focus on [Centos](https://www.centos.org/) 7, for consistency, and if there's any need to switch up, we'll handle that when the time comes... 
 
+Example Video:
+<object width="425" height="344"><param name="movie" value="http://www.youtube.com/v/Erz5tZeG96I&hl=en&fs=1"></param><param name="allowFullScreen" value="true"></param><embed src="http://www.youtube.com/v/Erz5tZeG96I&hl=en&fs=1" type="application/x-shockwave-flash" allowfullscreen="true" width="425" height="344"></embed></object>
+
 
