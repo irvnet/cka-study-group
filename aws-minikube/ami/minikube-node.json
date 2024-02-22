@@ -6,7 +6,7 @@
   "builders": [
     {
       "tags": {
-        "Name": "k8s base node",
+        "Name": "CKA: minikube node",
         "Environment": "cka-prep"
       },
       "type": "amazon-ebs",
@@ -26,7 +26,7 @@
       },
       "instance_type": "t3.xlarge",
       "ssh_username": "ubuntu",
-      "ami_name": "k8s-node-ubuntu-{{timestamp}}"
+      "ami_name": "cka-minikube-node-{{timestamp}}"
     }
   ],
   "provisioners": [

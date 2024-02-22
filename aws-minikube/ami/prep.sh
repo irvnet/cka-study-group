@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo 'prepping test environment image... '
+echo 'prepping environment:  minikube: ubuntu 22.04 LTS... '
 
 ## install prep
 sudo apt-get update && sudo apt upgrade -y
@@ -8,6 +8,9 @@ sudo apt-get -y install socat conntrack ipset
 
 ## turn off swap
 swapoff -a
+
+## prevent popups for interactive installs
+sed -i "/#\$nrconf{restart} = 'i';/s/.*/\$nrconf{restart} = 'a';/" /etc/needrestart/needrestart.conf
 
 ## load required modules
 cat <<EOF | sudo tee /etc/modules-load.d/k8s.conf
@@ -68,12 +71,5 @@ curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube_latest
 sudo dpkg -i minikube_latest_amd64.deb
 mv ~/minikube_latest_amd64.deb /tmp
 
-## install kubeadm starter
-# sudo apt-get install -y apt-transport-https ca-certificates curl gpg
-# curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
-# echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.28/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
-
-# sudo apt-get update
-# sudo apt-get install -y kubeadm kubectl kubelet
-# sudo apt-mark hold kubelet kubeadm kubectl
+sudo apt-get update && sudo apt-get upgrade -y
 
