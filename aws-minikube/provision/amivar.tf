@@ -1,1 +1,1 @@
-variable "AMI_ID" { default = "ami-0ece8f66a7770f704" }
+variable "AMI_ID" { default = "ami-0f6f01471644ded46" }
