@@ -12,7 +12,7 @@ sudo apt-get upgrade -y
 sudo apt-get -y install socat conntrack ipset apt-transport-https ca-certificates curl gpg
 
 ## update hosts with a better name
-sudo sed -i '1 i\$(hostname -I ) k8scp' /etc/hosts
+sudo sed -i '127.0.0.1 ctrl' /etc/hosts
 
 ## turn off swap
 swapoff -a
@@ -61,17 +61,11 @@ cat <<EOF | sudo tee /etc/containerd/config.toml
 EOF
 sudo systemctl restart containerd
 
-## add to docker group
-sudo apt-get install -y docker-ce docker-ce-cli
-sudo usermod -aG docker $USER
-newgrp docker
-
 ## install kubeadm starter v1.27 (to prepare for upgrade)
 curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.27/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
 echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.27/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
-
-curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
 sudo apt-get update
-sudo apt-get install -y kubeadm kubelet kubectl
-sudo apt-mark hold kubelet kubeadm kubectl
-
+#sudo apt-get install -y kubeadm kubelet kubectl
+#sudo apt-mark hold kubelet kubeadm kubectl
+ 
