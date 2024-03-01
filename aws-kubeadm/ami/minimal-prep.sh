@@ -34,7 +34,7 @@ EOF
 ## Apply sysctl params without reboot
 sudo sysctl --system
 
-## setup repos & install containerd
+## setup docker repos
 sudo mkdir -p /etc/apt/keyrings
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
 
@@ -42,3 +42,29 @@ echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.
 https://download.docker.com/linux/ubuntu \
 $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 
+## install containerd
+sudo apt-get update
+sudo apt-get install containerd.io -y
+sudo containerd config default | sudo tee /etc/containerd/config.toml
+sudo sed -e 's/SystemdCgroup = false/SystemdCgroup = true/g' -i /etc/containerd/config.toml
+sudo systemctl restart containerd
+
+## install kubeadm
+echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list > /dev/null
+curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+sudo apt-get update
+sudo apt-get upgrade -y
+sudo apt-get install -y kubeadm kubelet kubectl
+sudo apt-mark hold kubelet kubeadm kubectl
+
+## create kubeadm config file
+## boostrap cluster w/: "sudo kubeadm init --config=kubeadm-config.yaml --upload-certs | tee kubeadm-init.out"
+cat << EOF | tee ~/kubeadm-config.yaml
+## kubeadm-config.yaml (match cluster cidr and pod cidr)
+apiVersion: kubeadm.k8s.io/v1beta3
+kind: ClusterConfiguration
+kubernetesVersion: stable
+controlPlaneEndpoint: "ctrl:6443"
+networking:
+  podSubnet: 192.168.0.0/16
+EOF
