@@ -47,9 +47,6 @@ $(. /etc/os-release && echo "$VERSION_CODENAME") stable" |   sudo tee /etc/apt/s
 sudo apt-get update
 sudo apt-get install -y containerd.io
 
-## install docker daemon and client for local container dev
-sudo apt-get install -y docker-ce docker-ce-cli
-
 ## setup containerd config
 sudo mkdir -p /etc/containerd
 cat <<EOF | sudo tee /etc/containerd/config.toml
@@ -57,11 +54,6 @@ cat <<EOF | sudo tee /etc/containerd/config.toml
   [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options]
     SystemdCgroup = true
 EOF
-
-## add to docker group
-sudo groupadd docker
-sudo usermod -aG docker $USER
-newgrp docker
 
 ## restart containerd
 sudo systemctl restart containerd
