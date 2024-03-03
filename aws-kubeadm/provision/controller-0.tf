@@ -14,7 +14,7 @@ resource "aws_instance" "controller-0" {
   key_name               = "asamples"
 
   tags = {
-    Name = "kubeadm controller-0"
+    Name = "kubeadm-controller-0"
     proj = "cka-review"
   }
 
