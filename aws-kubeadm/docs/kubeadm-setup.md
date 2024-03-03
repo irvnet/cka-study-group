@@ -137,25 +137,38 @@ sudo chown $(id -u):$(id -g) $HOME/.kube/config
 }
 ```
 
-## untaint control node
-kubectl taint nodes --all node-role.kubernetes.io/control-plane-
 
+The overlay network is key... make sure the overlay network and the cluster CIDR match (or there may be issues with cluster networking, or CoreDNS). 
 
+```
 {
-## deploy flannel: update flannel config for same CIDR block as kubadm init
-## or... tell kubeadm to use 10.244.0.0/16 as the cluster CIDR block
+## deploy flannel
 ## https://kubernetes.io/docs/concepts/cluster-administration/addons/#networking-and-network-policy
 ## https://github.com/flannel-io/flannel#deploying-flannel-manually
+
 kubectl apply -f https://github.com/flannel-io/flannel/releases/latest/download/kube-flannel.yml
 }
+```
+After installing flannel try `kubectl get pods -A` to see that CoreDNS and Flannel are running properly before going further... 
 
 
+If the network is running properly and `kubectl get nodes` tells you that all the nodes are "Ready" then you have a few choices... 
+
+1. Work with a 1-node cluster: kubeadm puts a taint on the controller so containers don't get scheduled there (assuming worker nodes will be added). 
+```
+{
+## untaint control node
+kubectl taint nodes --all node-role.kubernetes.io/control-plane-
+}
+```
+2. add more nodes to the cluster: the join command allows the operator to add more nodes to the cluster. Before running this, validate that the worker node has an entry in /etc/hosts for `ctrl` so the kubadm join command can resolve the address
+```
 {
 ## join other nodes to the cluster
 kubeadm join ctrl:6443 --token <token> \
 	--discovery-token-ca-cert-hash <hash>
 }
-
+```
 
 
 
