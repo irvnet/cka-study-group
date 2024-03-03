@@ -52,14 +52,14 @@ sudo systemctl restart containerd
 echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list > /dev/null
 curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
 sudo apt-get update
-sudo apt-get install -y kubeadm kubelet kubectl
+sudo apt-get install -y kubelet=1.27.6-00 kubeadm=1.27.6-00 kubectl=1.27.6-00
 sudo apt-mark hold kubelet kubeadm kubectl
 
-## add controller public ip to hosts file for kubeadm commands
+## add a dummy line for controller public ip to /etc/hosts (workers need it to join the cluster)
 CTRL_PUBLIC_IP=$(curl -s http://169.254.169.254/latest/meta-data/public-ipv4)
-CONTROLLER_HOST_ENTRY="$CTRL_PUBLIC_IP ctrl"
-sudo sed -i $CONTROLLER_HOST_ENTRY /etc/hosts
-sudo head /etc/hosts
+echo -e "\n" | sudo tee -a /etc/hosts
+echo "## add controller public ip" | sudo tee -a /etc/hosts
+echo "127.0.0.1 ctrl" | sudo tee -a /etc/hosts
 
 ## create kubeadm config file
 cat << EOF | tee ~/kubeadm-config.yaml
