@@ -1,4 +1,12 @@
 
+
+[Kubeadm](https://github.com/kubernetes/kubeadm/blob/main/docs/design/design_v1.10.md) is helpful tooling to orchestrate the initial deployment of a Kubernetes cluster. It streamlines the process by:
+- Automating cluster configuration 
+- Performing pre-flight checks:  Kubeadm verifies the presence of key components and configurations
+- Official & Reliable: Developed and maintained by the Kubernetes project, Kubeadm adheres to best practices and offers reliable operation.
+
+Tools like [Kind](https://kind.sigs.k8s.io/) and [Minikube](https://minikube.sigs.k8s.io/docs/start/) are great for building dev and test clusters but kubeadm is helpful for building more *real clusters… not just test clusters. It enables the creation of a cluster that closely resembles a production setting, providing a realistic testing ground for applications. 
+
 Hit the AWS console and provision 3 ec2 images... 
 - size: t2.medium or t2.large 
 - storage: 20gb 
@@ -6,8 +14,7 @@ Hit the AWS console and provision 3 ec2 images...
 
 This should fit in the free tier without being too resource constrained, but adjust up or down to your liking.
 
-
-Start with getting the machine prepped with the basics
+Start with getting the operating system prepped with the basics
 ```
 {
 ## prevent interactive prompts 
@@ -21,21 +28,29 @@ sudo apt-get -y install socat conntrack ipset apt-transport-https ca-certificate
 }
 ```
 
+Turn off swap since it affects scheduling... 
+```
+{
+## turn off swap and disable it in /etc/fstab
+swapoff -a
+
+## disable swap in fstab
+#sudo sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
+
+}
+```
 
 ```
 {
-## turn off swap
-swapoff -a
+## load required modules
+cat <<EOF | sudo tee /etc/modules-load.d/containerd.conf
+overlay
+br_netfilter
+EOF
 
- ## load required modules
- cat <<EOF | sudo tee /etc/modules-load.d/containerd.conf
- overlay
- br_netfilter
- EOF
-
- ## configure to load on boot
- sudo modprobe overlay
- sudo modprobe br_netfilter
+## configure to load on boot
+sudo modprobe overlay
+sudo modprobe br_netfilter
 }
 ```
 
