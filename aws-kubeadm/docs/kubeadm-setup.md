@@ -59,14 +59,14 @@ Configure a few sysctl updates to ensure forwarding, the config is applied now, 
 ```
 {
 ## config sysctl updates to persist across reboots
- cat <<EOF | sudo tee /etc/sysctl.d/99-kubernetes-cri.conf
- net.bridge.bridge-nf-call-iptables  = 1
- net.bridge.bridge-nf-call-ip6tables = 1
- net.ipv4.ip_forward                 = 1
- EOF
+cat <<EOF | sudo tee /etc/sysctl.d/99-kubernetes-cri.conf
+net.bridge.bridge-nf-call-iptables  = 1
+net.bridge.bridge-nf-call-ip6tables = 1
+net.ipv4.ip_forward                 = 1
+EOF
 
- ## Apply sysctl params without reboot
- sudo sysctl --system
+## Apply sysctl params without reboot
+sudo sysctl --system
 }
 ```
 
