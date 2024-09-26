@@ -94,15 +94,16 @@ Install kubeadm... the current iteration tests with kubeadm 1.28, but we'll inst
 ```
 {
 ## install kubeadm
-echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list > /dev/null
-curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.30/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg 
+echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.30/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list 
+
 apt-get update
 
 ## what versions of kubeadm are available in this repo?
 sudo apt list -a kubeadm
 
-sudo apt-get install -y kubelet=1.27.6-00 kubeadm=1.27.6-00 kubectl=1.27.6-00
-sudo apt-mark hold kubelet kubeadm kubectl
+sudo apt-get install -y kubelet kubeadm kubectl
+#sudo apt-mark hold kubelet kubeadm kubectl
 }
 ```
 
