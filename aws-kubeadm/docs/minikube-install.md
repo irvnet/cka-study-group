@@ -28,6 +28,9 @@ sudo apt-get -y install socat conntrack ipset apt-transport-https ca-certificate
 }
 ```
 
+
+Minikube supports [a few runtimes](https://minikube.sigs.k8s.io/docs/runtimes/) including containerd, cri-o and docker. This time, we'll install docker, because its easy, and because Minikube will use docker as a default. 
+
 ```
 {
 ## setup docker repos
@@ -47,15 +50,19 @@ sudo apt-get -y install socat conntrack ipset apt-transport-https ca-certificate
 }
 ```
 
+
+Download the Minikube binary and place it in a directory that is included in your system's PATH .
+
 ```
 {
-## install minikube
 curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
 chmod +x minikube
 sudo mkdir -p /usr/local/bin/
 sudo mv minikube /usr/local/bin/
 }
 ```
+
+Add the GPG to auth to the k8s package repo, update the repo list and update the package list. Finally, install the latest stable version of kubectl on the system.
 
 ```
 {
@@ -72,6 +79,7 @@ sudo apt-get install -y kubectl
 }
 ```
 
+Minikube will start with 1 node by default, but can be start with multiple nodes. It'll discover that docker is installed and automatically use the docker driver. Here, we'll innitialize a minikube cluster that has 2 nodes. Minikube will download the required vm, initialize the cluster, and set the proper context so kubectl will connect properly. 
 ```
 {
 ## start minikube with docker driver
@@ -80,9 +88,12 @@ kubectl get nodes
 }
 ```
 
+Add a few extras including the ingress controller, metrics server and dashbaord
 ```
 {
 ## install ingress controller
 minikube addons enable ingress
+minikube addons enable  metrics-server
+minikube addons enable dashbaord
 }
 ```
