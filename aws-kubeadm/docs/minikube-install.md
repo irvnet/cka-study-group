@@ -91,7 +91,6 @@ kubectl get nodes
 Add a few extras including the ingress controller, metrics server and dashbaord
 ```
 {
-## install ingress controller
 minikube addons enable ingress
 minikube addons enable  metrics-server
 minikube addons enable dashbaord
