@@ -21,32 +21,23 @@ sudo apt-get -y install socat conntrack ipset apt-transport-https ca-certificate
 }
 
 
-
 {
-## add docker repos to install containerd
-sudo mkdir -p /etc/apt/keyrings
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+## setup docker repos
+ sudo mkdir -p /etc/apt/keyrings
+ curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
 
-echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \
-https://download.docker.com/linux/ubuntu \
-$(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+ echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \
+ https://download.docker.com/linux/ubuntu \
+ $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+ ## install docker
+ sudo apt-get install docker.io -y
+ sudo groupadd docker
+ sudo usermod -aG docker $USER
+ newgrp docker
+ docker run hello-world
 }
 
-{
-## install containerd
-sudo apt-get update && sudo apt-get install containerd.io -y
-sudo containerd config default | sudo tee /etc/containerd/config.toml
-sudo sed -e 's/SystemdCgroup = false/SystemdCgroup = true/g' -i /etc/containerd/config.toml
-sudo systemctl restart containerd
-}
-
-{
-## install docker along with containerd (for minikube)
-sudo apt-get update && sudo apt-get upgrade -y
-sudo apt-get install docker-ce docker-ce-cli -y
-sudo usermod -aG docker $USER
-newgrp docker
-}
 
 {
 ## download / install minikube binary
