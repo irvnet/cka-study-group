@@ -1,4 +1,11 @@
-# /bin/ setup docker repos
+
+Minikube is a lightweight Kubernetes implementation that's helpful to run for learning, experimentation, and testing. It simplifies the process of setting up a Kubernetes environment by providing a cluster that runs in a virtual machine (VM) or a container on various platforms. Minikube supports various container runtimes, such as Docker, containerd, and CRI-O, allowing users to test different configurations and runtimes in a controlled environment. With features like LoadBalancer support, multi-node configurations, and add-ons, Minikube provides a versatile platform to explore Kubernetes concepts without the complexity of running a full production cluster.
+
+Hit the AWS console and provision 1 ec2 image... 
+- size: t2.medium or t2.large 
+- storage: 20gb 
+- OS: This exercise uses Ubuntu 22.04 LTS 
+
 
 ## config for unattended install
 sudo sed -i "/#\$nrconf{restart} = 'i';/s/.*/\$nrconf{restart} = 'a';/" /etc/needrestart/needrestart.conf
