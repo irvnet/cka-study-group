@@ -48,10 +48,17 @@ sudo chmod +x /usr/local/bin/minikube
 
 {
 ## install kubectl
-curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-sudo mv ~/kubectl /usr/local/bin/kubectl
-sudo chmod +x /usr/local/bin/kubectl
+curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.30/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg 
+echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.30/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list 
+
+sudo apt-get update
+
+## what versions of kubeadm are available in this repo?
+sudo apt list -a kubectl
+
+sudo apt-get install -y kubectl
 }
+
 
 {
 ## start minikube with docker driver
