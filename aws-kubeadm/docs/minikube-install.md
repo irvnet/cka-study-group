@@ -10,6 +10,12 @@ Hit the AWS console and provision 1 ec2 image...
 ---
 
 ```
+
+Here we'll accomplish a few things: 
+* The sed command updates the needrestart config to automatically restart services if required.
+* debconf command sets the package installer to a non-interactive mode to streamline the process.
+* update and install a few pre-req's that are necessary for managing network connections and dependencies
+
 {
 ## prevent interactive prompts 
 sudo sed -i "/#\$nrconf{restart} = 'i';/s/.*/\$nrconf{restart} = 'a';/" /etc/needrestart/needrestart.conf
