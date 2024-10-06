@@ -40,10 +40,11 @@ sudo apt-get -y install socat conntrack ipset apt-transport-https ca-certificate
 
 
 {
-## download / install minikube binary
-wget https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
-sudo cp minikube-linux-amd64 /usr/local/bin/minikube
-sudo chmod +x /usr/local/bin/minikube
+## install minikube
+curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+chmod +x minikube
+sudo mkdir -p /usr/local/bin/
+sudo mv minikube /usr/local/bin/
 }
 
 {
@@ -62,7 +63,8 @@ sudo apt-get install -y kubectl
 
 {
 ## start minikube with docker driver
-minikube start --memory 12120 --cpus 3  --driver=docker
+minikube start  --nodes=2
+kubectl get nodes
 }
 
 {
