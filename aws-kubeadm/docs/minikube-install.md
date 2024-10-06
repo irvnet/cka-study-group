@@ -9,6 +9,7 @@ Hit the AWS console and provision 1 ec2 image...
 
 ---
 
+```
 {
 ## prevent interactive prompts 
 sudo sed -i "/#\$nrconf{restart} = 'i';/s/.*/\$nrconf{restart} = 'a';/" /etc/needrestart/needrestart.conf
@@ -19,7 +20,7 @@ sudo apt-get update
 sudo apt-get upgrade -y
 sudo apt-get -y install socat conntrack ipset apt-transport-https ca-certificates gpg
 }
-
+```
 
 {
 ## setup docker repos
