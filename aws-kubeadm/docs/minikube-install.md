@@ -7,11 +7,20 @@ Hit the AWS console and provision 1 ec2 image...
 - OS: This exercise uses Ubuntu 22.04 LTS 
 
 
-## config for unattended install
-sudo sed -i "/#\$nrconf{restart} = 'i';/s/.*/\$nrconf{restart} = 'a';/" /etc/needrestart/needrestart.conf
-echo 'debconf debconf/frontend select Noninteractive' | sudo debconf-set-selections
+---
 
-sudo apt-get update && sudo apt-get upgrade -y
+{
+## prevent interactive prompts 
+sudo sed -i "/#\$nrconf{restart} = 'i';/s/.*/\$nrconf{restart} = 'a';/" /etc/needrestart/needrestart.conf
+ echo 'debconf debconf/frontend select Noninteractive' | sudo debconf-set-selections
+
+## install some pre-reqs
+sudo apt-get update
+sudo apt-get upgrade -y
+sudo apt-get -y install socat conntrack ipset apt-transport-https ca-certificates gpg
+}
+
+
 
 {
 ## add docker repos to install containerd
