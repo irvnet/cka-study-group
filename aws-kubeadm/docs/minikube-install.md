@@ -22,6 +22,7 @@ sudo apt-get -y install socat conntrack ipset apt-transport-https ca-certificate
 }
 ```
 
+```
 {
 ## setup docker repos
  sudo mkdir -p /etc/apt/keyrings
@@ -38,8 +39,9 @@ sudo apt-get -y install socat conntrack ipset apt-transport-https ca-certificate
  newgrp docker
  docker run hello-world
 }
+```
 
-
+```
 {
 ## install minikube
 curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
@@ -47,7 +49,9 @@ chmod +x minikube
 sudo mkdir -p /usr/local/bin/
 sudo mv minikube /usr/local/bin/
 }
+```
 
+```
 {
 ## install kubectl
 curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.30/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg 
@@ -60,17 +64,19 @@ sudo apt list -a kubectl
 
 sudo apt-get install -y kubectl
 }
+```
 
-
+```
 {
 ## start minikube with docker driver
 minikube start  --nodes=2
 kubectl get nodes
 }
+```
 
+```
 {
 ## install ingress controller
 minikube addons enable ingress
 }
-
-
+```
