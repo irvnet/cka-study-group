@@ -2,7 +2,7 @@
 
 We're a small group with a common interest in passing the [CKA](https://www.cncf.io/certification/expert/). We all have a belief that there's lots of value in understanding distributed systems, containers and container orchestration for the betterment of development and operations, however most of us are working with customers in some capacity and have both a need, and personal interest in learning deep skills in the platform. 
 
-The study group revolves around the [CNCF Exam Curriculum repository ](https://github.com/cncf/curriculum) with a focus on the [1.28 version](https://github.com/cncf/curriculum/blob/master/CKA_Curriculum_v1.28.pdf) of the curriculum.
+The study group revolves around the [CNCF Exam Curriculum repository ](https://github.com/cncf/curriculum) with a focus on the [1.31 version](https://github.com/cncf/curriculum/blob/master/CKA_Curriculum_v1.31.pdf) of the curriculum.
 
 
 #### 25% - Cluster Architecture, Installation & Configuration
