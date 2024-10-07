@@ -9,7 +9,7 @@ echo 'debconf debconf/frontend select Noninteractive' | sudo debconf-set-selecti
 ## install prep
 sudo apt-get update
 sudo apt-get upgrade -y
-sudo apt-get -y install socat conntrack ipset apt-transport-https ca-certificates curl gpg
+sudo apt-get -y install apt-transport-https ca-certificates curl gpg
 
 ## turn off swap
 swapoff -a
@@ -49,10 +49,11 @@ sudo sed -e 's/SystemdCgroup = false/SystemdCgroup = true/g' -i /etc/containerd/
 sudo systemctl restart containerd
 
 ## install kubeadm
-echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list > /dev/null
+curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.27/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+echo "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.27/deb/ /" | sudo tee /etc/apt/sources.list.d/kubernetes.list
 curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
 sudo apt-get update
-sudo apt-get install -y kubelet=1.27.6-00 kubeadm=1.27.6-00 kubectl=1.27.6-00
+sudo apt-get install -y kubelet kubeadm kubectl
 sudo apt-mark hold kubelet kubeadm kubectl
 
 ## add a dummy line for controller public ip to /etc/hosts (workers need it to join the cluster)
@@ -82,3 +83,4 @@ sudo chown ubuntu:ubuntu ~/cluster-init.sh
 ## download flannel config
 wget https://github.com/flannel-io/flannel/releases/latest/download/kube-flannel.yml
 
+sudo apt-get update && sudo apt-get upgrade -y
