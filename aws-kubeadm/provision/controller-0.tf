@@ -1,7 +1,6 @@
-
 resource "aws_instance" "controller-0" {
   ami           = var.AMI_ID
-  instance_type = "t2.medium"
+  instance_type = "t3.xlarge"
 
   root_block_device {
     volume_type           = "gp2"
