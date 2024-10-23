@@ -113,7 +113,7 @@ Give the controller a name /etc/hosts (and propogate it to /etc/hosts on the wor
 {
 CTRL_PUBLIC_IP=$(curl -s http://169.254.169.254/latest/meta-data/public-ipv4)
 CONTROLLER_HOST_ENTRY="$CTRL_PUBLIC_IP ctrl"
-sudo sed -i $CONTROLLER_HOST_ENTRY /etc/hosts
+echo "$CONTROLLER_HOST_ENTRY" | sudo tee -a /etc/hosts 
 sudo head /etc/hosts
 }
 ```
