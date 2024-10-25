@@ -97,7 +97,7 @@ Install kubeadm... the current iteration tests with kubeadm 1.28, but we'll inst
 curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.30/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg 
 echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.30/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list 
 
-apt-get update
+sudo apt-get update
 
 ## what versions of kubeadm are available in this repo?
 sudo apt list -a kubeadm
