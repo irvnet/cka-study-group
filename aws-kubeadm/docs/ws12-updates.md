@@ -130,10 +130,10 @@ kubectl create deployment nginx-deployment --image=nginx --dry-run=client -o yam
 
 Explanation:
 kubectl create deployment: Creates a Deployment resource.
-`--image=nginx`: Specifies the container image.
-`--dry-run=client`: Checks the command without making changes to the cluster.
-`-o yaml`: Outputs the resource definition in YAML format.
-`> nginx-deployment.yaml`: Saves the output to a file.
+- `--image=nginx`: Specifies the container image.
+- `--dry-run=client`: Checks the command without making changes to the cluster.
+- `-o yaml`: Outputs the resource definition in YAML format.
+- `> nginx-deployment.yaml`: Saves the output to a file.
 
 
 You can also grab the manifest of an existing resource from the cluster and use it as a template for more customization.
@@ -143,6 +143,6 @@ kubectl get deployment nginx-deployment -o yaml > exported-deployment.yaml
 ```
 
 Explanation:
-`kubectl get deployment`: Retrieves the specified Deployment.
-`-o yaml`: Outputs the resource definition in YAML format.
-`> exported-deployment.yaml`: Saves the output to a file.
+- `kubectl get deployment`: Retrieves the specified Deployment.
+- `-o yaml`: Outputs the resource definition in YAML format.
+- `> exported-deployment.yaml`: Saves the output to a file.
