@@ -88,11 +88,22 @@ kubectl get nodes
 }
 ```
 
-Add a few extras including the ingress controller, metrics server and dashbaord
+Install minikube ingress controller and update /etc/hosts with minikube.local domain
+referencing the ingress controllers external ip
 ```
 {
 minikube addons enable ingress
-minikube addons enable  metrics-server
+
+MINIKUBE_IP=$(minikube ip)
+echo "$MINIKUBE_IP minikube.local" | sudo tee -a /etc/hosts
+}
+```
+
+
+Add a few extras including the ingress controller, metrics server and dashbaord
+```
+{
+minikube addons enable metrics-server
 minikube addons enable dashboard
 }
 ```
