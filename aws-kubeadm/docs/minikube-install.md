@@ -93,6 +93,6 @@ Add a few extras including the ingress controller, metrics server and dashbaord
 {
 minikube addons enable ingress
 minikube addons enable  metrics-server
-minikube addons enable dashbaord
+minikube addons enable dashboard
 }
 ```
