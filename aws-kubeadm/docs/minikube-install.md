@@ -219,11 +219,9 @@ Update the `rules` section of the ingress resource to include the EC2 public DNS
 
 From an external machine, send a request using the EC2 public DNS as the host header. 
 ```bash
-EC2_DNSNAME=<add your public dna name here>
-EC2_DNSNAME="ec2-44-197-175-10.compute-1.amazonaws.com"
+EC2_DNSNAME=<add your public dns name here>
 echo "Host: $EC2_DNSNAME" http://$EC2_DNSNAME/
 curl -H "Host: $EC2_DNSNAME" http://$EC2_DNSNAME/
-
 ```
 
 The updated ingress resource should recognize the request and route it to the back end service.
@@ -234,8 +232,9 @@ Hello from Ingress
 ```
 
 The URL should now be accessible from the browser. From the command line, print the url and copy to the browser
+```bash
 echo http://$EC2_DNSNAME/
-
+```
 Expected output:
 ```plaintext
 Hello from Ingress
