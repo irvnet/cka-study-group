@@ -199,28 +199,34 @@ curl -H "Host: minikube.local" http://$VM_FQDN/
 Update the `rules` section of the ingress resource to include the EC2 public DNS name and service port... either use `kubectl edit ingress test-ingress` or update and reapply the manifest as necessary.
 
 ```yaml
-   spec:
-     rules:
-     - host: <add the value from $VM_FQDN here to route requests to the public dns name>
-       http:
-         paths:
-         - path: /
-           pathType: Prefix
-           backend:
-             service:
-               name: hello-service
-               port:
-                 number: 8080
-     - host: minikube.local
-       http:
-         paths:
-         - path: /
-           pathType: Prefix
-           backend:
-             service:
-               name: hello-service
-               port:
-                 number: 8080
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: test-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - host:  minikube.local
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: hello-service
+            port:
+              number: 8080
+  - host:  <ADD THE PUBLIC DNS NAME HERE...>
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: hello-service
+            port:
+              number: 8080
 ```
 
 From an external machine, send a request using the EC2 public DNS as the host header. 
