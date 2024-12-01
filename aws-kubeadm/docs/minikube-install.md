@@ -177,6 +177,12 @@ Let's make the ingress resource support external access using the EC2 public DNS
 
 From a machine external to the EC2 instance, use `curl` to send a request to the EC2 instance's public DNS while including the `minikube.local` host header. With the the `minikube.local` host header the result should be the same as accessing the ingress resource from the ec2 instance
 
+Setup port forwarding to make services accessible externally
+```bash
+sudo kubectl port-forward --kubeconfig /home/ubuntu/.kube/config --namespace ingress-nginx svc/ingress-nginx-controller 80:80 --address=0.0.0.0 &
+
+ps aux | grep "kubectl port-forward"
+```
 
 Retrieve the EC2 instance's public DNS name
 ```bash
