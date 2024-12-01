@@ -241,3 +241,10 @@ Hello from Ingress
 ```
 ---
 
+Summary
+
+With this in place we've completed a few things... 
+- installed and configured and started minikube with more resources than the default configuration provides
+- installed the minikube ingress controller
+- configured and tested an ingress resource
+- made the ingress resource accessible from the public dns name of the ec2 instance
