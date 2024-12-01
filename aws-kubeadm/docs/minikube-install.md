@@ -88,6 +88,9 @@ kubectl get nodes
 }
 ```
 
+---
+
+
 Install minikube ingress controller and update /etc/hosts with minikube.local domain
 referencing the ingress controllers external ip
 ```
@@ -168,10 +171,74 @@ Test the ingress resource with curl
 curl http://minikube.local
 ```
 
-Add a few extras including the ingress controller, metrics server and dashbaord
-```
+---
+
+Let's make the ingress resource support external access using the EC2 public DNS name.
+
+From a machine external to the EC2 instance, use `curl` to send a request to the EC2 instance's public DNS while including the `minikube.local` host header. With the the `minikube.local` host header the result should be the same as accessing the ingress resource from the ec2 instance
+
+
+Retrieve the EC2 instance's public DNS name
+```bash
 {
-minikube addons enable metrics-server
-minikube addons enable dashboard
+VM_FQDN=$(curl -s http://169.254.169.254/latest/meta-data/public-hostname)
+echo $VM_FQDN
+
+curl -H "Host: minikube.local" http://$VM_FQDN/
 }
+
 ```
+
+
+Update the `rules` section of the ingress resource to include the EC2 public DNS name and service port... either use `kubectl edit ingress test-ingress` or update and reapply the manifest as necessary.
+
+```yaml
+   spec:
+     rules:
+     - host: <add the value from $VM_FQDN here to route requests to the public dns name>
+       http:
+         paths:
+         - path: /
+           pathType: Prefix
+           backend:
+             service:
+               name: hello-service
+               port:
+                 number: 8080
+     - host: minikube.local
+       http:
+         paths:
+         - path: /
+           pathType: Prefix
+           backend:
+             service:
+               name: hello-service
+               port:
+                 number: 8080
+```
+
+From an external machine, send a request using the EC2 public DNS as the host header. 
+```bash
+EC2_DNSNAME=<add your public dna name here>
+EC2_DNSNAME="ec2-44-197-175-10.compute-1.amazonaws.com"
+echo "Host: $EC2_DNSNAME" http://$EC2_DNSNAME/
+curl -H "Host: $EC2_DNSNAME" http://$EC2_DNSNAME/
+
+```
+
+The updated ingress resource should recognize the request and route it to the back end service.
+
+Expected output:
+```plaintext
+Hello from Ingress
+```
+
+The URL should now be accessible from the browser. From the command line, print the url and copy to the browser
+echo http://$EC2_DNSNAME/
+
+Expected output:
+```plaintext
+Hello from Ingress
+```
+---
+
