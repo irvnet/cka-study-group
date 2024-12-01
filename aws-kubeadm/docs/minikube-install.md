@@ -99,6 +99,71 @@ echo "$MINIKUBE_IP minikube.local" | sudo tee -a /etc/hosts
 }
 ```
 
+Test the ingress configuration with a simple ingress resource
+```bash
+{
+cat <<EOF | sudo tee ingress-test.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hello
+  template:
+    metadata:
+      labels:
+        app: hello
+    spec:
+      containers:
+      - name: hello
+        image: hashicorp/http-echo
+        args:
+        - "-text=Hello from Ingress"
+        ports:
+        - containerPort: 5678
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello-service
+spec:
+  selector:
+    app: hello
+  ports:
+  - protocol: TCP
+    port: 8080
+    targetPort: 5678
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: test-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - host:  minikube.local
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: hello-service
+            port:
+              number: 8080
+EOF
+}
+```
+
+
 
 Add a few extras including the ingress controller, metrics server and dashbaord
 ```
