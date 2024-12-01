@@ -83,7 +83,7 @@ Minikube will start with 1 node by default, but can be start with multiple nodes
 ```
 {
 ## start minikube with docker driver
-minikube start  --nodes=2
+minikube start --driver=docker --nodes=1 --memory 11192 --cpus 4
 kubectl get nodes
 }
 ```
