@@ -163,7 +163,10 @@ EOF
 }
 ```
 
-
+Test the ingress resource with curl
+```bash
+curl http://minikube.local
+```
 
 Add a few extras including the ingress controller, metrics server and dashbaord
 ```
