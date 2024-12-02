@@ -259,7 +259,6 @@ Expected output:
 ```plaintext
 Hello from Ingress
 ```
----
 
 With this in place we've completed a few things... 
 - installed the Minikube ingress controller
@@ -267,5 +266,94 @@ With this in place we've completed a few things...
 - made the ingress resource accessible from the public dns name of the ec2 instance
 
 ---
+
+From here we'll secure access to back end resources by configuring TLS using self-signed certificates. 
+
+Use openssl to create self-signed certificates. There are other options such as Let's Encrypt that would be more suitable for a production deployment, but for now use self-signed certificates and the public DNS name of our ec2 image.
+```bash
+{
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+  -keyout tls.key -out tls.crt -subj "/CN=<add your public DNS name here>"
+}
+```
+
+Store the self-signed certificate and private key in a Kubernetes secret
+```bash
+{
+kubectl create secret tls tls-secret --cert=tls.crt --key=tls.key
+kubectl get secrets tls-secret
+}
+```
+
+
+Create or update the Ingress resource to reference the TLS secret
+```yaml
+{
+cat <<EOF | sudo tee tls-test-ingress.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: test-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  tls:
+  - hosts:
+    - <add the EC2 public DNS name here>  
+    secretName: tls-secret
+  rules:
+  - host: <add the EC2 public DNS name here>
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: hello-service
+            port:
+              number: 8080
+EOF
+}
+```
+
+Apply the manifest to udpate the ingress resource
+```bash
+{
+kubectl apply -f tls-test-ingress.yaml
+kubectl describe ingress test-ingress
+
+}
+```
+
+Before testing https access we'll need access to port 443. Previously we forwarded port 80, this time we'll forward port 443.
+```bash
+{
+sudo kubectl port-forward --kubeconfig /home/ubuntu/.kube/config --namespace ingress-nginx svc/ingress-nginx-controller 443:443 --address=0.0.0.0 &
+
+ps aux | grep "kubectl port-forward"
+}
+```
+
+
+To test the configuration use curl with the -k flag to ignore SSL warnings for the self-signed certificate:
+```bash
+curl -k https://<EC2_PUBLIC_DNS_NAME>/
+```
+
+From a browser visit: 
+```plaintext
+https://<EC2_PUBLIC_DNS>/
+```
+
+
+With this in place we've completed a few things... 
+- created self signed certificates
+- added the certificates as secrets 
+- updated the ingress resource to use the certificates 
+- made port 443 accessible outside the cluster
+
+Our back end services should now be accessible via https using our self-signed certificates
+
+
 
 
