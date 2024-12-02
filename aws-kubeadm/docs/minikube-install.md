@@ -88,7 +88,15 @@ kubectl get nodes
 }
 ```
 
+With this in place we've completed a few things... 
+- installed and configured and started minikube with more resources than the default configuration provides
+- installed the kubectl client so we can communicate with the newly provisioned cluster
+
+From here we can begin configuring additional capabilities for our cluster.
+
 ---
+
+Now lets install and configure Ingress to enable access to back end services via http.
 
 
 Install minikube ingress controller and update /etc/hosts with minikube.local domain
@@ -253,10 +261,11 @@ Hello from Ingress
 ```
 ---
 
-Summary
-
 With this in place we've completed a few things... 
-- installed and configured and started minikube with more resources than the default configuration provides
-- installed the minikube ingress controller
+- installed the Minikube ingress controller
 - configured and tested an ingress resource
 - made the ingress resource accessible from the public dns name of the ec2 instance
+
+---
+
+
