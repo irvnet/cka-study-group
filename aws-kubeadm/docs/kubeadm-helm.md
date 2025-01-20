@@ -75,5 +75,114 @@ kubectl port-forward svc/my-nginx-nginx 8080:80
 
 Visit `http://localhost:8080` in your browser to see the default NGINX home page.
 
----
 
+
+Override Default Values with `values.yaml`. Customize the deployment by overriding the default values. Create a `values.yaml` file to modify the replica count and service type.
+
+```yaml
+{
+cat << EOF | tee ~/values.yaml
+replicaCount: 3
+service:
+  type: NodePort
+EOF
+}
+```
+
+Redeploy or upgrade the Helm release with the custom values:
+
+```bash
+helm upgrade my-nginx bitnami/nginx -f values.yaml
+```
+
+Validate the updates to the deployment
+
+```bash
+{
+  kubectl get svc
+  kubectl get pods
+}
+```
+
+
+Let's update the web server and change the index page with a configmap. First, lets create a new custom homepage. 
+
+```html
+cat << EOF | tee ~/index.html
+<!DOCTYPE html>
+<html>
+<head>
+<title>Welcome to the tutorial deployment!</title>
+<style>
+html { color-scheme: light dark; }
+body { width: 35em; margin: 0 auto;
+font-family: Tahoma, Verdana, Arial, sans-serif; }
+</style>
+</head>
+<body>
+<h1>Welcome to My Favorite Webpage!</h1>
+<p>If you see this page, you've completed the updates to the web server successfully! </p>
+
+<p><em>Thank you for using this tutorial.</em></p>
+</body>
+</html>
+EOF
+```
+
+And create a configmap from the html file we just created.
+
+```bash
+kubectl create configmap custom-homepage --from-file=index.html
+```
+
+Next, lets update the `values.yaml` file with additional details for the new configmap. 
+
+```yaml
+{
+cat << EOF | tee ~/values.yaml
+replicaCount: 3
+service:
+  type: NodePort
+
+extraVolumeMounts:
+  - name: custom-homepage
+    mountPath: /opt/bitnami/nginx/html
+
+extraVolumes:
+  - name: custom-homepage
+    configMap:
+      name: custom-homepage
+EOF
+}
+```
+
+And deploy the updates to the cluster.
+```bash
+helm upgrade my-nginx bitnami/nginx -f values.yaml
+```
+
+Validate the Deployment After deploying the updates, verify the ConfigMap is mounted correctly and the custom homepage is being served.
+
+Check the running pods:
+
+```bash
+  kubectl get pods
+```
+
+Inspect the pod to confirm the ConfigMap is mounted:
+
+```bash
+kubectl describe pod <nginx-pod-name>  | grep  custom-homepage
+```
+
+Get the NGINX URL
+```bash
+{
+ export NODE_PORT=$(kubectl get --namespace default -o jsonpath="{.spec.ports[0].nodePort}" services my-nginx)
+ export NODE_IP=$(kubectl get nodes --namespace default -o jsonpath="{.items[0].status.addresses[0].address}")
+ curl "http://${NODE_IP}:${NODE_PORT}"
+}
+```
+
+
+---
