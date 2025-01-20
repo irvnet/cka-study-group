@@ -1,7 +1,6 @@
-
 resource "aws_instance" "worker-1" {
   ami           = var.AMI_ID
-  instance_type = "t2.medium"
+  instance_type = "t3.large"
 
   root_block_device {
     volume_type           = "gp2"
