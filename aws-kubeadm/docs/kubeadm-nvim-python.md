@@ -27,21 +27,6 @@ pip3 install --user flake8
 ```
 
 
-
-Install black for code formatting
-
-```
-{
-curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
-sudo apt install -y nodejs
-node --version
-npm --version
-}
-```
-
-
-
-
 Configure the python lsp for lazyvim
 
 ```
