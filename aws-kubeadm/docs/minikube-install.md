@@ -83,16 +83,277 @@ Minikube will start with 1 node by default, but can be start with multiple nodes
 ```
 {
 ## start minikube with docker driver
-minikube start  --nodes=2
+minikube start --driver=docker --nodes=1 --memory 11192 --cpus 4
 kubectl get nodes
 }
 ```
 
-Add a few extras including the ingress controller, metrics server and dashbaord
+With this in place we've completed a few things... 
+- installed and configured and started minikube with more resources than the default configuration provides
+- installed the kubectl client so we can communicate with the newly provisioned cluster
+
+From here we can begin configuring additional capabilities for our cluster.
+
+---
+
+Now lets install and configure Ingress to enable access to back end services via http.
+
+
+Install minikube ingress controller and update /etc/hosts with minikube.local domain
+referencing the ingress controllers external ip
 ```
 {
 minikube addons enable ingress
-minikube addons enable  metrics-server
-minikube addons enable dashbaord
+
+MINIKUBE_IP=$(minikube ip)
+echo "$MINIKUBE_IP minikube.local" | sudo tee -a /etc/hosts
 }
 ```
+
+Test the ingress configuration with a simple ingress resource
+```bash
+{
+cat <<EOF | sudo tee ingress-test.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hello
+  template:
+    metadata:
+      labels:
+        app: hello
+    spec:
+      containers:
+      - name: hello
+        image: hashicorp/http-echo
+        args:
+        - "-text=Hello from Ingress"
+        ports:
+        - containerPort: 5678
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello-service
+spec:
+  selector:
+    app: hello
+  ports:
+  - protocol: TCP
+    port: 8080
+    targetPort: 5678
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: test-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - host:  minikube.local
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: hello-service
+            port:
+              number: 8080
+EOF
+}
+```
+
+Test the ingress resource with curl
+```bash
+curl http://minikube.local
+```
+
+---
+
+Let's make the ingress resource support external access using the EC2 public DNS name.
+
+From a machine external to the EC2 instance, use `curl` to send a request to the EC2 instance's public DNS while including the `minikube.local` host header. With the the `minikube.local` host header the result should be the same as accessing the ingress resource from the ec2 instance
+
+Setup port forwarding to make services accessible externally
+```bash
+sudo kubectl port-forward --kubeconfig /home/ubuntu/.kube/config --namespace ingress-nginx svc/ingress-nginx-controller 80:80 --address=0.0.0.0 &
+
+ps aux | grep "kubectl port-forward"
+```
+
+Retrieve the EC2 instance's public DNS name
+```bash
+{
+VM_FQDN=$(curl -s http://169.254.169.254/latest/meta-data/public-hostname)
+echo $VM_FQDN
+
+curl -H "Host: minikube.local" http://$VM_FQDN/
+}
+
+```
+
+
+Update the `rules` section of the ingress resource to include the EC2 public DNS name and service port... either use `kubectl edit ingress test-ingress` or update and reapply the manifest as necessary.
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: test-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - host:  minikube.local
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: hello-service
+            port:
+              number: 8080
+  - host:  <ADD THE PUBLIC DNS NAME HERE...>
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: hello-service
+            port:
+              number: 8080
+```
+
+From an external machine, send a request using the EC2 public DNS as the host header. 
+```bash
+EC2_DNSNAME=<add your public dns name here>
+echo "Host: $EC2_DNSNAME" http://$EC2_DNSNAME/
+curl -H "Host: $EC2_DNSNAME" http://$EC2_DNSNAME/
+```
+
+The updated ingress resource should recognize the request and route it to the back end service.
+
+Expected output:
+```plaintext
+Hello from Ingress
+```
+
+The URL should now be accessible from the browser. From the command line, print the url and copy to the browser
+```bash
+echo http://$EC2_DNSNAME/
+```
+Expected output:
+```plaintext
+Hello from Ingress
+```
+
+With this in place we've completed a few things... 
+- installed the Minikube ingress controller
+- configured and tested an ingress resource
+- made the ingress resource accessible from the public dns name of the ec2 instance
+
+---
+
+From here we'll secure access to back end resources by configuring TLS using self-signed certificates. 
+
+Use openssl to create self-signed certificates. There are other options such as Let's Encrypt that would be more suitable for a production deployment, but for now use self-signed certificates and the public DNS name of our ec2 image.
+```bash
+{
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+  -keyout tls.key -out tls.crt -subj "/CN=<add your public DNS name here>"
+}
+```
+
+Store the self-signed certificate and private key in a Kubernetes secret
+```bash
+{
+kubectl create secret tls tls-secret --cert=tls.crt --key=tls.key
+kubectl get secrets tls-secret
+}
+```
+
+
+Create or update the Ingress resource to reference the TLS secret
+```yaml
+{
+cat <<EOF | sudo tee tls-test-ingress.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: test-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  tls:
+  - hosts:
+    - <add the EC2 public DNS name here>  
+    secretName: tls-secret
+  rules:
+  - host: <add the EC2 public DNS name here>
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: hello-service
+            port:
+              number: 8080
+EOF
+}
+```
+
+Apply the manifest to udpate the ingress resource
+```bash
+{
+kubectl apply -f tls-test-ingress.yaml
+kubectl describe ingress test-ingress
+
+}
+```
+
+Before testing https access we'll need access to port 443. Previously we forwarded port 80, this time we'll forward port 443.
+```bash
+{
+sudo kubectl port-forward --kubeconfig /home/ubuntu/.kube/config --namespace ingress-nginx svc/ingress-nginx-controller 443:443 --address=0.0.0.0 &
+
+ps aux | grep "kubectl port-forward"
+}
+```
+
+
+To test the configuration use curl with the -k flag to ignore SSL warnings for the self-signed certificate:
+```bash
+curl -k https://<EC2_PUBLIC_DNS_NAME>/
+```
+
+From a browser visit: 
+```plaintext
+https://<EC2_PUBLIC_DNS>/
+```
+
+
+With this in place we've completed a few things... 
+- created self signed certificates
+- added the certificates as secrets 
+- updated the ingress resource to use the certificates 
+- made port 443 accessible outside the cluster
+
+Our back end services should now be accessible via https using our self-signed certificates
+
+
+
+
